@@ -1,4 +1,5 @@
 using LocationTracker.API.Hubs;
+using LocationTracker.Core.Interfaces.Services;
 using LocationTracker.Core.Services;
 using LocationTracker.Core.UseCases;
 using LocationTracker.Domain.Interfaces;

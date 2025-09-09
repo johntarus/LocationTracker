@@ -9,7 +9,6 @@ public class LocationHub : Hub
         await Clients.All.SendAsync("ReceiveLocation", deviceId, latitude, longitude);
     }
     
-    // Optional: Add methods for connection management
     public override async Task OnConnectedAsync()
     {
         await Clients.Caller.SendAsync("ReceiveMessage", "Connected to location hub");

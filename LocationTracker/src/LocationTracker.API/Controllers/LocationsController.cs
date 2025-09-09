@@ -1,6 +1,6 @@
 using LocationTracker.Core.DTOs;
+using LocationTracker.Core.Interfaces.Services;
 using LocationTracker.Core.Services;
-using LocationTracker.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LocationTracker.API.Controllers;
@@ -16,7 +16,6 @@ public class LocationsController : ControllerBase
         _locationService = locationService;
     }
     
-    // GET: api/locations
     [HttpGet]
     public async Task<ActionResult<ApiResponse<List<LocationResponseDto>>>> GetAllLocations()
     {
@@ -30,7 +29,6 @@ public class LocationsController : ControllerBase
         return Ok(response);
     }
     
-    // GET: api/locations/paginated?page=1&pageSize=20
     [HttpGet("paginated")]
     public async Task<ActionResult<ApiResponse<PaginatedResponse<LocationResponseDto>>>> GetPaginatedLocations(
         [FromQuery] int page = 1, 
@@ -50,7 +48,6 @@ public class LocationsController : ControllerBase
         return Ok(response);
     }
     
-    // GET: api/locations/devices
     [HttpGet("devices")]
     public async Task<ActionResult<ApiResponse<DeviceListResponseDto>>> GetDevices()
     {
@@ -64,7 +61,6 @@ public class LocationsController : ControllerBase
         return Ok(response);
     }
     
-    // GET: api/locations/device/{deviceId}
     [HttpGet("device/{deviceId}")]
     public async Task<ActionResult<ApiResponse<List<LocationResponseDto>>>> GetLocationsByDevice(string deviceId)
     {
@@ -83,7 +79,6 @@ public class LocationsController : ControllerBase
         return Ok(response);
     }
     
-    // GET: api/locations/device/{deviceId}/range
     [HttpGet("device/{deviceId}/range")]
     public async Task<ActionResult<ApiResponse<List<LocationResponseDto>>>> GetLocationsByDeviceAndTimeRange(
         string deviceId, 
@@ -110,7 +105,6 @@ public class LocationsController : ControllerBase
         return Ok(response);
     }
     
-    // GET: api/locations/recent
     [HttpGet("recent")]
     public async Task<ActionResult<ApiResponse<List<LocationResponseDto>>>> GetRecentLocations([FromQuery] int count = 10)
     {
@@ -125,29 +119,5 @@ public class LocationsController : ControllerBase
         }
         
         return Ok(response);
-    }
-    
-    // POST: api/locations
-    [HttpPost]
-    public async Task<ActionResult<ApiResponse<LocationResponseDto>>> AddLocation([FromBody] LocationRecord location)
-    {
-        if (location == null)
-        {
-            return BadRequest(ApiResponse<LocationResponseDto>.CreateError("Location data is required"));
-        }
-
-        if (string.IsNullOrEmpty(location.DeviceId))
-        {
-            return BadRequest(ApiResponse<LocationResponseDto>.CreateError("Device ID is required"));
-        }
-
-        var response = await _locationService.AddLocationAsync(location);
-        
-        if (!response.Success)
-        {
-            return StatusCode(500, response);
-        }
-        
-        return CreatedAtAction(nameof(GetLocationsByDevice), new { deviceId = location.DeviceId }, response);
     }
 }
