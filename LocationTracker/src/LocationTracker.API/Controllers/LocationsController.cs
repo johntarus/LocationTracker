@@ -1,6 +1,5 @@
 using LocationTracker.Core.DTOs;
 using LocationTracker.Core.Interfaces.Services;
-using LocationTracker.Core.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LocationTracker.API.Controllers;
@@ -17,50 +16,38 @@ public class LocationsController : ControllerBase
     }
     
     [HttpGet]
-    public async Task<ActionResult<ApiResponse<List<LocationResponseDto>>>> GetAllLocations()
-    {
-        var response = await _locationService.GetAllLocationsAsync();
-        
-        if (!response.Success)
-        {
-            return StatusCode(500, response);
-        }
-        
-        return Ok(response);
-    }
-    
-    [HttpGet("paginated")]
-    public async Task<ActionResult<ApiResponse<PaginatedResponse<LocationResponseDto>>>> GetPaginatedLocations(
-        [FromQuery] int page = 1, 
-        [FromQuery] int pageSize = 20)
+    public async Task<ActionResult<ApiResponse<PaginatedResponse<LocationResponseDto>>>> GetLocations(
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 10)
     {
         if (page < 1) page = 1;
-        if (pageSize < 1) pageSize = 20;
+        if (pageSize < 1) pageSize = 10;
         if (pageSize > 100) pageSize = 100;
 
-        var response = await _locationService.GetPaginatedLocationsAsync(page, pageSize);
-        
+        var response = await _locationService.GetLocationsAsync(page, pageSize);
+
         if (!response.Success)
         {
             return StatusCode(500, response);
         }
-        
+
         return Ok(response);
     }
-    
+
+    // GET: api/locations/devices
     [HttpGet("devices")]
     public async Task<ActionResult<ApiResponse<DeviceListResponseDto>>> GetDevices()
     {
         var response = await _locationService.GetAllDeviceIdsAsync();
-        
+
         if (!response.Success)
         {
             return StatusCode(500, response);
         }
-        
+
         return Ok(response);
     }
-    
+
     [HttpGet("device/{deviceId}")]
     public async Task<ActionResult<ApiResponse<List<LocationResponseDto>>>> GetLocationsByDevice(string deviceId)
     {
@@ -70,19 +57,19 @@ public class LocationsController : ControllerBase
         }
 
         var response = await _locationService.GetLocationsByDeviceAsync(deviceId);
-        
+
         if (!response.Success)
         {
             return NotFound(response);
         }
-        
+
         return Ok(response);
     }
-    
+
     [HttpGet("device/{deviceId}/range")]
     public async Task<ActionResult<ApiResponse<List<LocationResponseDto>>>> GetLocationsByDeviceAndTimeRange(
-        string deviceId, 
-        [FromQuery] DateTime startTime, 
+        string deviceId,
+        [FromQuery] DateTime startTime,
         [FromQuery] DateTime endTime)
     {
         if (string.IsNullOrEmpty(deviceId))
@@ -96,28 +83,12 @@ public class LocationsController : ControllerBase
         }
 
         var response = await _locationService.GetLocationsByDeviceAndTimeRangeAsync(deviceId, startTime, endTime);
-        
+
         if (!response.Success)
         {
             return NotFound(response);
         }
-        
-        return Ok(response);
-    }
-    
-    [HttpGet("recent")]
-    public async Task<ActionResult<ApiResponse<List<LocationResponseDto>>>> GetRecentLocations([FromQuery] int count = 10)
-    {
-        if (count < 1) count = 10;
-        if (count > 100) count = 100;
 
-        var response = await _locationService.GetRecentLocationsAsync(count);
-        
-        if (!response.Success)
-        {
-            return StatusCode(500, response);
-        }
-        
         return Ok(response);
     }
 }
