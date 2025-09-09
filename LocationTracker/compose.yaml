@@ -7,7 +7,8 @@
       dockerfile: src/LocationTracker.API/Dockerfile
       
     depends_on:
-      - sqlserver
+      sqlserver:
+        condition: service_healthy
     ports:
       - "5001:80"
     environment:

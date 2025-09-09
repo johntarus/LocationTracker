@@ -15,6 +15,12 @@ class Program
         Console.WriteLine("=== Location Tracker Device Simulator ===");
         Console.WriteLine("Press Ctrl+C to exit\n");
 
+        var messageDelayMs = 1000;
+        var batchDelayMs = 5000; 
+        var maxMessages = 1000;
+
+        Console.WriteLine($"Configuration: {messageDelayMs}ms between messages, {batchDelayMs}ms between batches");
+
         try
         {
             var factory = new ConnectionFactory
@@ -38,7 +44,7 @@ class Program
                 arguments: null);
 
             Console.WriteLine("Connected to RabbitMQ successfully!");
-            Console.WriteLine("Sending location data every 5 seconds...\n");
+            Console.WriteLine("Sending location data...\n");
 
             var messageCount = 0;
             
@@ -68,11 +74,22 @@ class Program
 
                     messageCount++;
                     Console.WriteLine($"[{DateTime.Now:HH:mm:ss}] #{messageCount:D4} Sent: {deviceId}");
-                    await Task.Delay(500);
+                    
+                    // Delay between individual messages
+                    await Task.Delay(messageDelayMs);
                 }
 
                 Console.WriteLine($"--- Batch completed. Total messages: {messageCount} ---\n");
-                await Task.Delay(3000);
+                
+                // Optional: Limit total messages
+                if (maxMessages > 0 && messageCount >= maxMessages)
+                {
+                    Console.WriteLine($"Reached maximum message limit of {maxMessages}. Exiting.");
+                    break;
+                }
+                
+                // Delay between batches
+                await Task.Delay(batchDelayMs);
             }
         }
         catch (Exception ex)
