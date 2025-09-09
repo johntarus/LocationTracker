@@ -83,8 +83,6 @@ public class RabbitConsumerService : IHostedService, IDisposable
                 {
                     await ingestLocationUseCase.Execute(locationDto);
                     Console.WriteLine($"Processed location from device: {locationDto.DeviceId}");
-                    
-                    // Optional: Notify SignalR clients
                 }
             }
             catch (Exception ex)

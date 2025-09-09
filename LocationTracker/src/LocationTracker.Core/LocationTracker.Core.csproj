@@ -10,4 +10,8 @@
       <ProjectReference Include="..\LocationTracker.Domain\LocationTracker.Domain.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="AutoMapper" Version="15.0.1" />
+    </ItemGroup>
+
 </Project>

@@ -69,17 +69,12 @@ public class LocationsController : ControllerBase
     [HttpGet("device/{deviceId}/range")]
     public async Task<ActionResult<ApiResponse<List<LocationResponseDto>>>> GetLocationsByDeviceAndTimeRange(
         string deviceId,
-        [FromQuery] DateTime startTime,
-        [FromQuery] DateTime endTime)
+        [FromQuery] DateTime? startTime,
+        [FromQuery] DateTime? endTime)
     {
         if (string.IsNullOrEmpty(deviceId))
         {
             return BadRequest(ApiResponse<List<LocationResponseDto>>.CreateError("Device ID is required"));
-        }
-
-        if (startTime >= endTime)
-        {
-            return BadRequest(ApiResponse<List<LocationResponseDto>>.CreateError("Start time must be before end time"));
         }
 
         var response = await _locationService.GetLocationsByDeviceAndTimeRangeAsync(deviceId, startTime, endTime);
@@ -91,4 +86,5 @@ public class LocationsController : ControllerBase
 
         return Ok(response);
     }
+
 }

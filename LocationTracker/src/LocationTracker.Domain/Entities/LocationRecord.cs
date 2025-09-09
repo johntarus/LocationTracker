@@ -6,8 +6,8 @@ public class LocationRecord
     public double Latitude { get; set; }
     public double Longitude { get; set; }
     public DateTime Timestamp { get; set; }
-    public double Speed { get; set; } // in km/h
-    public double Bearing { get; set; } // in degrees
-    public double Accuracy { get; set; } // in meters
-    public double Altitude { get; set; } // in meters
+    public double Speed { get; set; } 
+    public double Bearing { get; set; }
+    public double Accuracy { get; set; } 
+    public double Altitude { get; set; }
 }
