@@ -1,4 +1,5 @@
 using LocationTracker.API.Hubs;
+using LocationTracker.Core.Services;
 using LocationTracker.Core.UseCases;
 using LocationTracker.Domain.Interfaces;
 using LocationTracker.Infrastructure.Data;
@@ -27,6 +28,7 @@ builder.Services.AddDbContext<TrackingDbContext>(options =>
 
 // Register dependencies
 builder.Services.AddScoped<ILocationRepository, LocationRepository>();
+builder.Services.AddScoped<ILocationService, LocationService>();
 builder.Services.AddScoped<IngestLocationUseCase>();
 
 // Register RabbitMQ Consumer as a hosted service
