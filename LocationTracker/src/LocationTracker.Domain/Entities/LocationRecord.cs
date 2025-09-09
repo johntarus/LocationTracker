@@ -1,0 +1,13 @@
+namespace LocationTracker.Domain.Entities;
+public class LocationRecord
+{
+    public int Id { get; set; }
+    public string DeviceId { get; set; } = string.Empty;
+    public double Latitude { get; set; }
+    public double Longitude { get; set; }
+    public DateTime Timestamp { get; set; }
+    public double Speed { get; set; } // in km/h
+    public double Bearing { get; set; } // in degrees
+    public double Accuracy { get; set; } // in meters
+    public double Altitude { get; set; } // in meters
+}

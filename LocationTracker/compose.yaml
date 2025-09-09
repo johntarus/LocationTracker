@@ -1,0 +1,35 @@
+﻿services:
+  locationtracker.api:
+    image: locationtracker.api
+    platform: linux/amd64
+    build:
+      context: .
+      dockerfile: src/LocationTracker.API/Dockerfile
+      
+    depends_on:
+      - sqlserver
+    ports:
+      - "5001:80"
+    environment:
+      - ConnectionStrings__DefaultConnection=Server=sqlserver,1433;Initial Catalog=LocationTracker;Persist Security Info=False;User ID=sa;Password=Passw0rd123;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=true;Connection Timeout=30;
+
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    platform: linux/amd64
+    ports:
+      - "1433:1433"
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=Passw0rd123
+      - MSSQL_PID=Developer
+    volumes:
+      - sqlserverdata:/var/opt/mssql
+    healthcheck:
+      test: ["CMD", "bash", "-c", "exec 3<>/dev/tcp/localhost/1433"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 60s
+
+volumes:
+  sqlserverdata:
