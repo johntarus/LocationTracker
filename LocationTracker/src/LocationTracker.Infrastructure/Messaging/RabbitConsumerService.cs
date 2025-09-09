@@ -66,36 +66,46 @@ public class RabbitConsumerService : IHostedService, IDisposable
     private async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         stoppingToken.ThrowIfCancellationRequested();
-        
+    
+        _channel.BasicQos(prefetchSize: 0, prefetchCount: 1, global: false);
+
         var consumer = new EventingBasicConsumer(_channel);
         consumer.Received += async (model, ea) =>
         {
             var body = ea.Body.ToArray();
             var message = Encoding.UTF8.GetString(body);
-            
+        
             try
             {
                 using var scope = _serviceProvider.CreateScope();
                 var ingestLocationUseCase = scope.ServiceProvider.GetRequiredService<IngestLocationUseCase>();
                 var locationDto = JsonSerializer.Deserialize<LocationDto>(message);
-                
+            
                 if (locationDto != null)
                 {
                     await ingestLocationUseCase.Execute(locationDto);
                     Console.WriteLine($"Processed location from device: {locationDto.DeviceId}");
+                
+                    _channel.BasicAck(ea.DeliveryTag, false);
+                    Console.WriteLine($"-> Acknowledged message for {locationDto.DeviceId}");
                 }
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error processing message: {ex.Message}");
+                // REQUEUE THE MESSAGE ON FAILURE
+                _channel.BasicNack(ea.DeliveryTag, false, true);
+                Console.WriteLine($"-> Re-queued message for retry");
             }
         };
-        
+    
         _channel.BasicConsume(
             queue: _queueName,
-            autoAck: true,
+            autoAck: false,
             consumer: consumer);
-        
+    
+        Console.WriteLine("RabbitMQ Consumer started. Waiting for messages...");
+    
         while (!stoppingToken.IsCancellationRequested)
         {
             await Task.Delay(1000, stoppingToken);

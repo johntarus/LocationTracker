@@ -75,20 +75,17 @@ class Program
                     messageCount++;
                     Console.WriteLine($"[{DateTime.Now:HH:mm:ss}] #{messageCount:D4} Sent: {deviceId}");
                     
-                    // Delay between individual messages
                     await Task.Delay(messageDelayMs);
                 }
 
                 Console.WriteLine($"--- Batch completed. Total messages: {messageCount} ---\n");
                 
-                // Optional: Limit total messages
                 if (maxMessages > 0 && messageCount >= maxMessages)
                 {
                     Console.WriteLine($"Reached maximum message limit of {maxMessages}. Exiting.");
                     break;
                 }
                 
-                // Delay between batches
                 await Task.Delay(batchDelayMs);
             }
         }

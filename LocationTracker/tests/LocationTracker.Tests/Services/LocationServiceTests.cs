@@ -6,7 +6,7 @@ using LocationTracker.Domain.Interfaces;
 using Moq;
 using Xunit;
 
-namespace LocationTracker.Core.Tests.Services
+namespace LocationTracker.Tests.Services
 {
     public class LocationServiceTests
     {
